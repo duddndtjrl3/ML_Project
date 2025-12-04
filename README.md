@@ -17,21 +17,13 @@ HOG -> 28*28 픽셀이므로 28의 인수 2, 4, 7 의 값을 ppc로 설정하여
 
 Robustness 검증을 위하여 Rotate, Scale, Shear, Shift 4가지 특성을 반영한 검증 데이터 셋을 생성 후 검증
 -> Shift를 제외한 나머지에서 acc 0.9 이상 나오며, Shift는 acc 0.5 정도 나온다.
--> Shift 내성을 가지기 위하여 전처리 단계에서 무게중심에 따른 Centering이 필요하다 생각이 든다.
+-> Shift 내성을 가지기 위하여 전처리 단계에서 무게중심에 따른 Centering이 필요하다 생각이 든다. -> 효과 입증
 
-그레이스케일 + HOG Feature + Hu moments 적용시
+Hu moments 추가 적용시
 Robustness에 좋은 내성을 보여주지만 마찬가지로 Shift 에 취약하다.
--> 그레이스케일 파라미터와 배경제거가 큰 의미가 있는지 모르겠다. / Hu moments 적용만으로 개선이 되는건지 다시 평가해봐야 할듯.
+-> 원본 데이터에도 좋은 성능이 나오지 않으므로 Hu moments 적용만으로 개선이 어렵다.
 
-1안. 배경 제거 -> 그레이스케일 max 적용 -> 이진화 적용 -> HOG 적용
-2안. 그레이스케일 mean 적용 -> HOG와 Hu moments 통합 Feature 적용
-2안이 효과가 있으면 1안에도 통합 feature 적용 가능
-
-이진화, HOG 파라미터, 그레이스케일 mean->max 적용은 acc 높아지는 결과가 나오긴 했다.
-배경제거를 통한 그레이스케일과 그냥 그레이스케일의 차이 확인중
-hu moments의 개선 효과가 있는지 확인할 필요가 있다.
-
-# 2025.12.02 11:20 Update
-1. Hu moments 는 Robustness에는 내성이 좋긴한데 기본 digit 인식 자체에 성능 하락이 있으므로 기각.
-2. 결국에는 (배경제거>그레이스케일MAX>이진화>HOG ppc 4) 로 진행하는것이 나아보인다.
-3. 기존 약점이던 Shift는 이진화 까지 진행된 후 Centering을 하고 HOG 추출을 하니 Shift 부분에 성능 개선이 매우 뚜렷하다.
+# 2025.12.04 10:20 Update
+1. 기존 약점이던 Shift는 이진화 까지 진행된 후 Centering을 하고 HOG 추출을 하니 Shift 부분에 성능 개선이 매우 뚜렷하다.
+2. CUDA를 이용하여 GPU로 돌려보았다.
+3. model_final_GPU 가 digit 학습 최종버전
